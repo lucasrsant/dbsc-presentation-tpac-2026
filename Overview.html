@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+ <head>
+  <meta charset=UTF-8>
+  <meta content="width=device-width" name="viewport">
+  <title>Device Bound Session Credentials - TPAC 2026 presentation</title>
+  <meta name=description content="Slides for TPAC 2026">
+  <link rel="stylesheet" href="../Templates/slides.css">
+  <!-- To use the b6+ framework, include this: -->
+  <script src="../Templates/b6plus.js"></script>
+  <!-- To use the Shower framework, remove b6plus above and add these two:
+  <script src="../Templates/shower.js"></script>
+  <script src="../Templates/iframe-fixup.js"></script> -->
+  <style>
+   /* For the tic-tac-toe example: */
+   .game td {border: thin solid; height: 1.2em}
+   .game {border: hidden; table-layout: fixed; border-collapse: collapse;
+     width: 5em; margin: 1em auto; text-align: center}
+  </style>
+ </head>
+ <body class="shower fade-in duration=15 hidemouse">
+
+  <!-- Remove this element if you don't want a progress bar: -->
+  <div class=progress></div>
+
+  <!-- Remove this element if you don't want the remaining time in
+       index mode and on the 2nd screen. If you keep it, you may want
+       to add the class "duration=n" on BODY, where n is the initial
+       number of minutes on the clock. Default is 30. -->
+  <div class=clock></div>
+
+  <!-- Alternative: Show also real time and elapsed time. -->
+  <!-- <div class=fullclock></div> -->
+
+  <!-- What a screen reader should say on leaving slide mode,
+       instead of the default ‘Stopped.’ -->
+  <div role=region aria-live=assertive>
+    Leaving slide mode.
+  </div>
+
+  <!-- Slide 1 -->
+  <section class="slide cover" id="cover">
+   <h1>Device Bound Session Credentials</h1>
+   <address>
+    Ali Hijazi<br>
+    Arnar Birgisson<br>
+    Artiom Casapu<br>
+    Lucas Santos<br>
+    Sidney Bovet</address>
+  </section>
+  <section class=comment>
+   <p>Notes for slide 1 can be put here.</p>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" id="lists">
+   <h2>Agenda</h2>
+   <ol>
+    <li>protocol overview</li>
+    <li>Platform support</li>
+    <li>Future work</li>
+    <li>Open discussion</li>
+   </ol>
+  </section>
+  <section class=comment>
+   <p>Notes for slide 2 can be put here.</p>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide">
+   <h2>Protocol overview</h2>
+   <h3>Threat model</h3>
+   <p class="next"><strong>The problem: </strong>Session cookies act as long-lived bearer tokens—once exfiltrated by malware, attackers can replay them from any device to bypass MFA and passkeys.</p>
+   <p class="next"><strong>The attacker: </strong>A malicious app running on the victim's device which was not present during session registration time.</p>
+  </section>
+  <section class=comment>
+   <p>Notes.</p>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide">
+   <h2>Protocol overview</h2>
+   <h3>Security model</h3>
+   <p class="next"><strong>The premise: </strong>As long as a session was registered on an uncompromised device, the server has cryptographic certainty that the session key cannot be exfiltrated to a different device—forcing malware to act locally.</p>
+   <p class="next"><strong>The protection: </strong>Bind session continuity to an unexportable private key securely stored by the browser so stolen tokens become useless once short-lived cookies expire.</p>
+   <h3 class="next">Caveat</h3>
+   <p class="next">The security model intentionally decouples the protocol from the platform storage primitive: user agents choose how to protect private keys (TPMs, secure enclaves, OS key APIs, or process isolation) without exposing hardware identity or device state to the server.</p>
+  </section>
+  <section class=comment>
+   <p>Notes.</p>
+  </section>
+
+  <!-- Slide 5-->
+  <section class="slide side big">
+   <h3>How it works at a high level</h3>
+   <img class="side"
+	src="../Templates/dbsc-seq-diagram.png"
+	alt="[Picture of a stylized tree with colorful, square leaves]">
+   <ol>
+    <li class="next">Server sends the registration header <code>Secure-Session-Registration</code> to the client.</li>
+    <li class="next">User agent creates a new key pair, sign the challenge present in the header, and sends it back to the registration endpoint.</li>
+    <li class="next">Server verifies the challenge signature, stores the client's public key, and responds with the registration instruction JSON.</li>
+    <li class="next">User agent starts watching for cookies listed in the instruction JSON expiration.</li>
+    <li class="next">User agent calls the refresh endpoint when cookies are expired or about to.</li>
+    <li class="next">Upon successful refresh, the server gives the client new (short-lived) cookies.</li>
+   </ol>
+  </section>
+  <section class=comment>
+   <p>Notes.</p>
+  </section>
+
+  <!-- Slide 6-->
+  <section class="slide">
+   <h2>Platform support</h2>
+   <ol>
+    <li>Chrome 147 on Windows</li>
+    <li>Chrome 149 on macOS</li>
+    <li>Edge 147 on Windows</li>
+   </ol>
+  </section>
+  <section class=comment>
+   <p>Notes.</p>
+  </section>
+
+  <!-- Slide 7-->
+  <section class="slide">
+   <h2>Future work</h2>
+   <ol>
+    <li><a href="https://github.com/wicg/dbsc-sso">DBSC for SSO</a></li>
+    <li><a href="https://github.com/explainers-by-googlers/dbsc-js-api">DBSC JS API</a></li>
+    <li>DBSC header-based sessions</li>
+   </ol>
+  </section>
+  <section class=comment>
+   <p>Notes.</p>
+  </section>
+
+  <footer class="long comment">
+   <address>Template created 22 January 2026 by <a
+   href="mailto:bert@w3.org">Bert Bos</a>.
+   This file last modified
+   $Date: 2026/09/21 14:05:06 $ by $Author: bbos $.</address>
+  </footer>
+ </body>
+</html>
+<!-- Local Variables: -->
+<!-- sgml-basic-offset: 1 -->
+<!-- End: -->
