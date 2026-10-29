@@ -72,7 +72,7 @@
    <h2>Protocol overview</h2>
    <h3>Threat model</h3>
    <p class="next"><strong>The problem: </strong>Session cookies act as long-lived bearer tokens—once exfiltrated by malware, attackers can replay them from any device to bypass MFA and passkeys.</p>
-   <p class="next"><strong>The attacker: </strong>A malicious app running on the victim's device which was not present during session registration time.</p>
+   <p class="next"><strong>The attacker: </strong>A malicious app running on the victim's device or a script executed by the user on terminal (ClickFix).</p>
   </section>
   <section class=comment>
    <p>Notes.</p>
@@ -83,7 +83,7 @@
    <h2>Protocol overview</h2>
    <h3>Security model</h3>
    <p class="next"><strong>The premise: </strong>As long as a session was registered on an uncompromised device, the server has cryptographic certainty that the session key cannot be exfiltrated to a different device—forcing malware to act locally.</p>
-   <p class="next"><strong>The protection: </strong>Bind session continuity to an unexportable private key securely stored by the browser so stolen tokens become useless once short-lived cookies expire.</p>
+   <p class="next"><strong>The protection: </strong>Bind session continuity to an securely stored private key so stolen tokens become useless once short-lived cookies expire.</p>
    <h3 class="next">Caveat</h3>
    <p class="next">The security model intentionally decouples the protocol from the platform storage primitive: user agents choose how to protect private keys (TPMs, secure enclaves, OS key APIs, or process isolation) without exposing hardware identity or device state to the server.</p>
   </section>
@@ -101,9 +101,10 @@
     <li class="next">Server sends the registration header <code>Secure-Session-Registration</code> to the client.</li>
     <li class="next">User agent creates a new key pair, sign the challenge present in the header, and sends it back to the registration endpoint.</li>
     <li class="next">Server verifies the challenge signature, stores the client's public key, and responds with the registration instruction JSON.</li>
-    <li class="next">User agent starts watching for cookies listed in the instruction JSON expiration.</li>
+    <li class="next">User agent creates session metadata and starts watching for cookies listed in the instruction JSON expiration.</li>
     <li class="next">User agent calls the refresh endpoint when cookies are expired or about to.</li>
     <li class="next">Upon successful refresh, the server gives the client new (short-lived) cookies.</li>
+    <li class="next">Otherwise, the monitored cookie would be missing in subsequent requests, and the server decides how to handle it (redirecting to sign-in page, showing unauthenticated content, etc.)</li>
    </ol>
   </section>
   <section class=comment>
